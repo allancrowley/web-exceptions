@@ -6,16 +6,19 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
 @Slf4j
 public class WebExceptionsController {
     public static String TYPE_MISMATCH_MESSAGE = "URL parameter has type mismatch";
+    public static String MISSING_PARAMETER_MESSAGE = ": URL parameter is missing";
     public static String JSON_TYPE_MISMATCH_MESSAGE = "JSON contains field with type mismatch";
+    public static String RESOURCE_NOT_FOUND_MESSAGE = "The requested resource was not found";
 
     @ExceptionHandler(NotFoundException.class)
     ResponseEntity<String> notFoundHandler(NotFoundException e) {
@@ -51,6 +54,17 @@ public class WebExceptionsController {
     ResponseEntity<String> methodArgumentTypeMismatch() {
         return returnResponse(TYPE_MISMATCH_MESSAGE, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    ResponseEntity<String> missingServletRequestParameter(MissingServletRequestParameterException e) {
+        return returnResponse(e.getParameterName() + MISSING_PARAMETER_MESSAGE, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    ResponseEntity<String> noHandlerFound() {
+        return returnResponse(RESOURCE_NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND);
+    }
+
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<String> jsonFieldTypeMismatchException() {
