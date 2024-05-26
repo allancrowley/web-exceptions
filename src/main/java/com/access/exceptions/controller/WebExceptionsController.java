@@ -10,7 +10,7 @@ import org.springframework.web.bind.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 @Slf4j
@@ -60,8 +60,8 @@ public class WebExceptionsController {
         return returnResponse(e.getParameterName() + MISSING_PARAMETER_MESSAGE, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoHandlerFoundException.class)
-    ResponseEntity<String> noHandlerFound() {
+    @ExceptionHandler(NoResourceFoundException.class)
+    ResponseEntity<String> noResourceFound() {
         return returnResponse(RESOURCE_NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND);
     }
 
